@@ -57,20 +57,26 @@ void run_proc(OpSeq *p_seq, int num_of_proc,Result* p_result)
 		{
 		case TL:
 			game.map_run.robot.turn(0);
+			auto_save();
 			break;
 		case TR:
 			game.map_run.robot.turn(1);
+			auto_save();
 			break;
 		case MOV:
 			game.map_run.robot_move();
+			auto_save();
 			break;
 		case JMP:
 			game.map_run.robot_jump();
+			auto_save();
 			break;
 		case LIT:
 			game.map_run.robot_lit();
+			auto_save();
 			break;
 		default:
+			auto_save();
 			if (p_seq->procs[num_of_proc].ops[i] - 4 > p_seq->count)
 			{
 				cout << "Warning:Called Process *Process" << p_seq->procs[num_of_proc].ops[i] - 5 << "* Does Not Exist" << endl;
@@ -160,7 +166,7 @@ Result robot_run(const char *path)
 			}
 		}
 	}
-
+	fin.close();
 	run_proc(&seq, 0, &result_to_return);
 	if(game.map_run.successed()){
 		result_to_return.result = LIGHT;

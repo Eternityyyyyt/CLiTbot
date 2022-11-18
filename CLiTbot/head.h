@@ -129,3 +129,6 @@ Result robot_run(const char* path);
 bool output_status();
 int string_to_int(string input);
 int check_P_string(string input);
+bool op_input(const char* path);
+void save(const char* path);
+void auto_save();
