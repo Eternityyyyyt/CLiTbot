@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <fstream>
 #include <cmath>
-#include "head.h"
+#include  "head.h"
 using namespace std;
 
 

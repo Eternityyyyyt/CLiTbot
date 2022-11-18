@@ -16,19 +16,12 @@ int power10(int x, int time)
 	}
 	return x;
 }
-int check_P_string(string input, int count_proc) //对P开头的字符串进行判断，如果不合法输出-1，如果合法输出所调用的PROC序号
-{
+int string_to_int(string input) {
 	int result = 0;
-	if (input.size() > 100000000)
-	{
-		cout << "Error:Invalid Operation" << endl;
-		return -1;
-	}
-	for (int i = 1; i < input.size(); i++)
+	for (int i = 0; i < input.size(); i++)
 	{
 		if (input[i] > '9' || input[i] < '0')
 		{
-			cout << "Error:Invalid Operation" << endl;
 			return -1;
 		}
 		else
@@ -36,12 +29,19 @@ int check_P_string(string input, int count_proc) //对P开头的字符串进行判断，如果
 			result += ((int)input[i] - '0') * power10(1, input.size() - i - 1);
 		}
 	}
-	/*if(result > count_proc)
-	{
-		cout << "Warning:Process" << result << " Does Not Exist" << endl;
-		return result;
-	}*/
 	return result;
+}
+int check_P_string(string input) //对P开头的字符串进行判断，如果不合法输出-1，如果合法输出所调用的PROC序号
+{
+	if (input.size() > 100000000)
+	{
+		cout << "Error:Invalid Operation" << endl;
+		return -1;
+	}
+	if (string_to_int(input.substr(1)) < 0) {
+		cout << "Error:Invalid Operation" << endl;
+	}
+	return string_to_int(input.substr(1)) ;
 }
 void run_proc(OpSeq *p_seq, int num_of_proc,Result* p_result)
 {
@@ -93,8 +93,7 @@ void run_proc(OpSeq *p_seq, int num_of_proc,Result* p_result)
 Result robot_run(const char *path)
 {
 	ifstream fin;
-	Result result_to_return; //准备返回的result
-	result_to_return.steps = 0;
+	Result result_to_return={0,FAILED}; //准备返回的result
 	fin.open(path);
 	if (fin.is_open() == 0) {
 		cout << "Error:Run Operation Sequence Failed:File Does Not Exist" << endl;
@@ -143,14 +142,14 @@ Result robot_run(const char *path)
 				seq.procs[i].ops[j] = CALL;
 			else if (temp[0] == 'P')
 			{
-				if (check_P_string(temp, seq.count) < 0)
+				if (check_P_string(temp) < 0)
 				{
 					result_to_return.result = FAILED;
 					return result_to_return;
 				}
 				else
 				{
-					seq.procs[i].ops[j] = (OpType)(check_P_string(temp, seq.count) + 5);
+					seq.procs[i].ops[j] = (OpType)(check_P_string(temp) + 5);
 				}
 			}
 			else

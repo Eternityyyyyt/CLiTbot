@@ -6,7 +6,7 @@
 #include "head.h"
 using namespace std;
 
-bool Map::load(const char* path) {
+bool Map::load(const char* path) {//从path加载地图,返回是否成功并输出失败原因
 	ifstream fin;
 	fin.open(path);
 	fin >> row >> col >> num_lights >> num_procs;
@@ -27,7 +27,7 @@ bool Map::load(const char* path) {
 	int dir_temp;
 	fin >> robot.pos.x >> robot.pos.y >> dir_temp;
 	robot.dir = (Direction)dir_temp;
-	cells[robot.pos.x][robot.pos.y].robot = false;
+	cells[robot.pos.x][robot.pos.y].robot = true;
 	return true;
 }
 bool Map::successed()
@@ -42,7 +42,7 @@ bool Map::successed()
 	}
 	return to_return;
 }
-bool Map::robot_move() //地图中的robot向所朝向的方向移动，返回是否成功
+bool Map::robot_move() //地图中的robot向所朝向的方向移动，返回是否成功并输出失败原因
 {
 	switch (robot.dir)
 	{
@@ -57,7 +57,9 @@ bool Map::robot_move() //地图中的robot向所朝向的方向移动，返回是否成功
 			cout << "Warning:Operation *Move* Unexecuted:Illegal Height" << endl;
 			return false;
 		}
+		cells[robot.pos.y][robot.pos.x].robot = false;
 		robot.pos.y--;
+		cells[robot.pos.y][robot.pos.x].robot = true;
 		break;
 	case DOWN:
 		if (robot.pos.y + 1 >= row)
@@ -70,7 +72,9 @@ bool Map::robot_move() //地图中的robot向所朝向的方向移动，返回是否成功
 			cout << "Warning:Operation *Move* Unexecuted:Illegal Height" << endl;
 			return false;
 		}
+		cells[robot.pos.y][robot.pos.x].robot = false;
 		robot.pos.y++;
+		cells[robot.pos.y][robot.pos.x].robot = true;
 		break;
 	case LEFT:
 		if (robot.pos.x - 1 < 0)
@@ -83,7 +87,9 @@ bool Map::robot_move() //地图中的robot向所朝向的方向移动，返回是否成功
 			cout << "Warning:Operation *Move* Unexecuted:Illegal Height" << endl;
 			return false;
 		}
+		cells[robot.pos.y][robot.pos.x].robot = false;
 		robot.pos.x--;
+		cells[robot.pos.y][robot.pos.x].robot = true;
 		break;
 	case RIGHT:
 		if (robot.pos.x + 1 >= col)
@@ -96,12 +102,14 @@ bool Map::robot_move() //地图中的robot向所朝向的方向移动，返回是否成功
 			cout << "Warning:Operation *Move* Unexecuted:Illegal Height" << endl;
 			return false;
 		}
+		cells[robot.pos.y][robot.pos.x].robot = false;
 		robot.pos.x++;
+		cells[robot.pos.y][robot.pos.x].robot = true;
 		break;
 	}
 	return true;
 }
-bool Map::robot_jump()
+bool Map::robot_jump()//向前跳跃（高度差1），返回是否成功并输出失败原因
 {
 	switch (robot.dir)
 	{
@@ -116,7 +124,9 @@ bool Map::robot_jump()
 			cout << "Warning:Operation *Jump* Unexecuted:Illegal Height" << endl;
 			return false;
 		}
+		cells[robot.pos.y][robot.pos.x].robot = false;
 		robot.pos.y--;
+		cells[robot.pos.y][robot.pos.x].robot = true;
 		break;
 	case DOWN:
 		if (robot.pos.y + 1 >= row)
@@ -129,7 +139,9 @@ bool Map::robot_jump()
 			cout << "Warning:Operation *Jump* Unexecuted:Illegal Height" << endl;
 			return false;
 		}
+		cells[robot.pos.y][robot.pos.x].robot = false;
 		robot.pos.y++;
+		cells[robot.pos.y][robot.pos.x].robot = true;
 		break;
 	case LEFT:
 		if (robot.pos.x - 1 < 0)
@@ -142,7 +154,9 @@ bool Map::robot_jump()
 			cout << "Warning:Operation *Jump* Unexecuted:Illegal Height" << endl;
 			return false;
 		}
+		cells[robot.pos.y][robot.pos.x].robot = false;
 		robot.pos.x--;
+		cells[robot.pos.y][robot.pos.x].robot = true;
 		break;
 	case RIGHT:
 		if (robot.pos.x + 1 >= col)
@@ -155,12 +169,14 @@ bool Map::robot_jump()
 			cout << "Warning:Operation *Jump* Unexecuted:Illegal Height" << endl;
 			return false;
 		}
+		cells[robot.pos.y][robot.pos.x].robot = false;
 		robot.pos.x++;
+		cells[robot.pos.y][robot.pos.x].robot = true;
 		break;
 	}
 	return true;
 }
-bool Map::robot_lit()
+bool Map::robot_lit()//点亮灯，返回是否成功并输出失败原因
 {
 	if (cells[robot.pos.x][robot.pos.y].light_id < 0)
 	{
