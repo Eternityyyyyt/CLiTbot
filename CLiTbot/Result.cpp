@@ -6,8 +6,9 @@
 #include "head.h"
 using namespace std;
 
-void Result::output()
+void Result::output(string op)
 {
+	cout << "<System>:" << op << ",Result:";
 	switch (result)
 	{
 	case FAILED:

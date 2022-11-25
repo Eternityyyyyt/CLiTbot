@@ -102,19 +102,19 @@ bool output_status(void)
                 {
                     if (game.map_init.cells[i][j].robot)//表示该单元格有机器人
                     {
-                        cout << "\33[91;104;1m" << game.map_init.cells[i][j].height << "\33[0m";
+                        cout << "\033[91;104;1m" << game.map_init.cells[i][j].height << "\033[0m";
                     }
                     else {//表示该单元格没有机器人 
-                        cout << "\33[92;104;1m" << game.map_init.cells[i][j].height << "\33[0m";
+                        cout << "\033[92;104;1m" << game.map_init.cells[i][j].height << "\033[0m";
                     }
                 }
                 else {//表示该单元格没有灯
                     if (game.map_init.cells[i][j].robot)//表示该单元格有机器人
                     {
-                        cout << "\33[91;100;1m" << game.map_init.cells[i][j].height << "\33[0m";
+                        cout << "\033[91;100;1m" << game.map_init.cells[i][j].height << "\033[0m";
                     }
                     else {//表示该单元格没有机器人 
-                        cout << "\33[92;100;1m" << game.map_init.cells[i][j].height << "\33[0m";
+                        cout << "\033[92;100;1m" << game.map_init.cells[i][j].height << "\033[0m";
                     }
                 }
             }

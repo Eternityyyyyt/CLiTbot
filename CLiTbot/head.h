@@ -123,7 +123,7 @@ struct Result
 {
 	int steps;		   //总步数
 	ResultType result; //结果的类型
-	void output();
+	void output(string op);
 };
 Result robot_run(const char* path);
 bool output_status();

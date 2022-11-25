@@ -39,7 +39,8 @@ int main() {
 			cout << "<System>:Command Format:*RUN <OP_PATH>*" << endl;
 		}
 		else if (input_op.substr(0, 4) == "RUN ") {
-			robot_run(input_op.substr(4).c_str()).output();
+			robot_run(input_op.substr(4).c_str()).output(input_op);
+			output_status();
 		}
 		//ÊäÈëµÄÊÇSTATUS
 		else if (input_op.substr(0, 6) == "STATUS" && input_op.size() == 6) {

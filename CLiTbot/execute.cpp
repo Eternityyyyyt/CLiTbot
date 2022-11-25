@@ -16,7 +16,7 @@ int power10(int x, int time)
 	}
 	return x;
 }
-int string_to_int(string input) {
+int string_to_int(string input) {//把字符串转成int，不合法输出-1（一定为非负整数）
 	int result = 0;
 	for (int i = 0; i < input.size(); i++)
 	{
@@ -35,14 +35,15 @@ int check_P_string(string input) //对P开头的字符串进行判断，如果不合法输出-1，如
 {
 	if (input.size() > 100000000)
 	{
-		cout << "Error:Invalid Operation" << endl;
+		cout << "<System>:Error:Invalid Operation" << endl;
 		return -1;
 	}
 	if (string_to_int(input.substr(1)) < 0) {
-		cout << "Error:Invalid Operation" << endl;
+		cout << "<System>:Error:Invalid Operation" << endl;
 	}
 	return string_to_int(input.substr(1)) ;
 }
+//执行p_seq指向的seq中的第num_of_proc个过程，将结果返回到p_result指向的Result中
 void run_proc(OpSeq *p_seq, int num_of_proc,Result* p_result)
 {
 	for (int i = 0; i < p_seq->procs[num_of_proc].count; i++)
@@ -50,7 +51,7 @@ void run_proc(OpSeq *p_seq, int num_of_proc,Result* p_result)
 		p_result->steps++;
 		if (p_result->steps > game.limit)
 		{
-			cout << "Warning:Too Many Steps" << endl;
+			cout << "<System>:Warning:Too Many Steps" << endl;
 			return;
 		}
 		switch (p_seq->procs[num_of_proc].ops[i]) //执行第num_of_proc的第i个操作
@@ -79,11 +80,11 @@ void run_proc(OpSeq *p_seq, int num_of_proc,Result* p_result)
 			auto_save();
 			if (p_seq->procs[num_of_proc].ops[i] - 4 > p_seq->count)
 			{
-				cout << "Warning:Called Process *Process" << p_seq->procs[num_of_proc].ops[i] - 5 << "* Does Not Exist" << endl;
+				cout << "<System>:Warning:Called Process *Process" << p_seq->procs[num_of_proc].ops[i] - 5 << "* Does Not Exist" << endl;
 			}
 			else if (p_seq->procs[p_seq->procs[num_of_proc].ops[i] - 5].count == 0)
 			{
-				cout << "Warning:Called Process *Process" << p_seq->procs[num_of_proc].ops[i] - 5 << "* Does Not Contain Operation" << endl;
+				cout << "<System>:Warning:Called Process *Process" << p_seq->procs[num_of_proc].ops[i] - 5 << "* Does Not Contain Any Operation" << endl;
 			}
 			else
 			{
@@ -102,7 +103,7 @@ Result robot_run(const char *path)
 	Result result_to_return={0,FAILED}; //准备返回的result
 	fin.open(path);
 	if (fin.is_open() == 0) {
-		cout << "Error:Run Operation Sequence Failed:File Does Not Exist" << endl;
+		cout << "<System>:Error:Run Operation Sequence Failed:File Does Not Exist" << endl;
 		result_to_return.result = FAILED;
 		return result_to_return;
 	}
@@ -111,14 +112,14 @@ Result robot_run(const char *path)
 	fin >> seq.count;	 //读取行数,同时也是有效过程数
 	if (fin.good() == 0) //非法输入检测
 	{
-		cout << "Error:Wrong Format" << endl;
+		cout << "<System>:Error:Wrong Format" << endl;
 		result_to_return.result = FAILED;
 		return result_to_return;
 	}
 	string temp;
 	if (seq.count > MAX_PROCS)
 	{
-		cout << "Error:Too Many Processes" << endl;
+		cout << "<System>:Error:Too Many Processes" << endl;
 		result_to_return.result = FAILED;
 		return result_to_return;
 	}
@@ -127,7 +128,7 @@ Result robot_run(const char *path)
 		fin >> seq.procs[i].count; //输入过程i的操作数量
 		if (fin.good() == 0)	   //非法输入检测
 		{
-			cout << "Error:Wrong Format" << endl;
+			cout << "<System>:Error:Wrong Format" << endl;
 			result_to_return.result = FAILED;
 			return result_to_return;
 		}
@@ -160,7 +161,7 @@ Result robot_run(const char *path)
 			}
 			else
 			{
-				cout << "Error:Invalid Operation" << endl;
+				cout << "<System>:Error:Invalid Operation" << endl;
 				result_to_return.result = FAILED;
 				return result_to_return;
 			}
@@ -181,6 +182,7 @@ Result robot_run(const char *path)
 		return result_to_return;
 	}
 }
+
 
 /*
 将Game中的map_name和save_path的数据类型改为string

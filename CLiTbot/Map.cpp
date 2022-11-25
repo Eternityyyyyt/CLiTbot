@@ -27,7 +27,7 @@ bool Map::load(const char* path) {//从path加载地图,返回是否成功并输出失败原因
 	int dir_temp;
 	fin >> robot.pos.x >> robot.pos.y >> dir_temp;
 	robot.dir = (Direction)dir_temp;
-	cells[robot.pos.x][robot.pos.y].robot = true;
+	cells[robot.pos.y][robot.pos.x].robot = true;
 	fin.close();
 	return true;
 }
