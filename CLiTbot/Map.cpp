@@ -19,7 +19,7 @@ bool Map::load(const char* path) {//从path加载地图,返回是否成功并输出失败原因
 	}
 	for (int i = 0; i < num_lights; i++) {
 		fin >> lights[i].pos.x >> lights[i].pos.y;
-		cells[lights[i].pos.x][lights[i].pos.y].light_id = i;
+		cells[lights[i].pos.y][lights[i].pos.x].light_id = i;
 	}
 	for (int i = 0; i < num_procs; i++) {
 		fin >> op_limit[i];
@@ -179,16 +179,16 @@ bool Map::robot_jump()//向前跳跃（高度差1），返回是否成功并输出失败原因
 }
 bool Map::robot_lit()//点亮灯，返回是否成功并输出失败原因
 {
-	if (cells[robot.pos.x][robot.pos.y].light_id < 0)
+	if (cells[robot.pos.y][robot.pos.x].light_id < 0)
 	{
 		cout << "Warning:Operation *LIT* Unexecuted:No Light In This Cell" << endl;
 		return false;
 	}
-	if (lights[cells[robot.pos.x][robot.pos.y].light_id].lighten)
+	if (lights[cells[robot.pos.y][robot.pos.x].light_id].lighten)
 	{
 		cout << "Warning:Operation *LIT* Unexecuted:Light Already Lit" << endl;
 		return false;
 	}
-	lights[cells[robot.pos.x][robot.pos.y].light_id].lighten = true;
+	lights[cells[robot.pos.y][robot.pos.x].light_id].lighten = true;
 	return true;
 }
