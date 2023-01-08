@@ -54,13 +54,12 @@ bool op_input(const char* path)
     return true;
 };
 
-bool output_status(void)
+bool output_status()
 {
     ifstream fin;
-    ofstream fout;
     fin.open(game.map_name);
     fin >> game.map_init.row >> game.map_init.col >> game.map_init.num_lights;
-    fin >> game.map_init.num_procs;//!这个地方是对的吗
+    fin >> game.map_init.num_procs;
     for (int i = 0; i < game.map_init.row; i++)
     {
         for (int j = 0; j < game.map_init.col; j++)
@@ -73,11 +72,11 @@ bool output_status(void)
     }
     for (int k = 0; k < game.map_init.num_lights; k++)
     {
-        fin >> game.map_init.lights->pos.x >> game.map_init.lights->pos.y;//灯的位置
-        game.map_init.lights->lighten = false;//灯没有被点亮
-        game.map_init.cells[game.map_init.lights->pos.y][game.map_init.lights->pos.x].light_id = 1;//把单元格的灯的标识更改
-
+        fin >> game.map_init.lights[k].pos.x >> game.map_init.lights[k].pos.y;//灯的位置
+        game.map_init.lights[k].lighten = false;//灯没有被点亮
+        game.map_init.cells[game.map_init.lights->pos.y][game.map_init.lights->pos.x].light_id = k;//把单元格的灯的标识更改
     }
+    //TODO 讨论一下这个地方是不是需要要改一下
     for (int l = 0; l < game.map_init.num_procs; l++)
     {
         fin >> game.map_init.op_limit[l];//把每一个进程的限制次数存储进去
@@ -88,7 +87,29 @@ bool output_status(void)
     cout << "Map Name: " << game.map_name << endl;
     cout << "Autosave: " << game.save_path << endl;
     cout << "Step Limit: " << game.limit << endl;
- 
+    cout << "Proc Limit : [";
+    for (int i = 0; i < game.map_init.num_procs - 1; i++)
+    {
+        cout << game.map_init.op_limit[i] << ", ";
+    }
+    cout << game.map_init.op_limit[game.map_init.num_procs - 1] << "]" << endl;
+    cout << "Robot is facing ";
+    switch (game.map_init.robot.dir)
+    {
+    case UP:
+        cout << "UP";
+        break;
+    case DOWN:
+        cout << "DOWN";
+        break;
+    case LEFT:
+        cout << "LEFT";
+        break;
+    case RIGHT:
+        cout << "RIGHT";
+        break;
+    }
+    cout << endl;
     for (int i = 0; i < game.map_init.row; i++)
     {
         for (int j = 0; j < game.map_init.col; j++)
@@ -121,29 +142,6 @@ bool output_status(void)
         }
         cout << endl;//每次完成一行的输入就换行
     }
-    cout << "Proc Limit : [";
-    for (int i = 0; i < game.map_init.num_procs - 1; i++)
-    {
-        cout << game.map_init.op_limit[i] << ", ";
-    }
-    cout << game.map_init.op_limit[game.map_init.num_procs - 1] << "]" << endl;
-    cout << "Robot is facing ";
-    switch (game.map_init.robot.dir)
-    {
-    case UP:
-        cout << "UP";
-        break;
-    case DOWN:
-        cout << "DOWN";
-        break;
-    case LEFT:
-        cout << "LEFT";
-        break;
-    case RIGHT:
-        cout << "RIGHT";
-        break;
-    }
-    cout << endl;
     fin.close();
     return true;
 }

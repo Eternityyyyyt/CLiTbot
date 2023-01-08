@@ -132,3 +132,4 @@ int check_P_string(string input);
 bool op_input(const char* path);
 void save(const char* path);
 void auto_save();
+bool output_results(Result last_result, string path);

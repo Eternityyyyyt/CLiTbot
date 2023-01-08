@@ -132,6 +132,7 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Result.cpp" />
     <ClCompile Include="Robot.cpp" />
+    <ClCompile Include="Run.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="execute.cpp" />
     <ClCompile Include="intereact.cpp" />
