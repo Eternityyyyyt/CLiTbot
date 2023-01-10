@@ -93,6 +93,7 @@ struct Map
 	int num_lights;				  //有效灯数
 	Robot robot;				  //地图上同时只有一个机器人
 	int num_procs;
+	bool exist = false;
 	int op_limit[MAX_PROCS];	  //每个过程的指令数限制
 	bool load(const char* path);
 	bool successed();

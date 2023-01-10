@@ -74,11 +74,13 @@ int main() {
 			cout << "<System>:Command Format:*OP <OP_PATH>*" << endl;
 		}
 		else if (input_op.substr(0, 3) == "OP ") {
-			if (op_input(input_op.substr(3).c_str())) {
-				cout << "<System>:Successfully Store Operation Sequence To <" << input_op.substr(5) << ">" << endl;
+			if (game.map_init.exist) {
+				if (op_input(input_op.substr(3).c_str())) {
+					cout << "<System>:Successfully Store Operation Sequence To <" << input_op.substr(3) << ">" << endl;
+				}
 			}
-			else {//文件不存在
-				cout << "Error:Load Map Failed:File Does Not Exist" << endl;
+			else {
+				cout << "<System>:Failed! Please Load Map First!" << endl;
 			}
 		}
 		//输入的是HELP
