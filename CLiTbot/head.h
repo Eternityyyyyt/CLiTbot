@@ -5,11 +5,11 @@
 #include <algorithm>
 #include <fstream>
 #include <cmath>
-#define left_robot "robot.left.bmp"
-#define right_robot "robot.right.bmp"
-#define up_robot "robot.up.bmp"
-#define down_robot "robot.down.bmp"
-#define origin "map.bmp"
+#define left_robot "src/robot.left.bmp"
+#define right_robot "src/robot.right.bmp"
+#define up_robot "src/robot.up.bmp"
+#define down_robot "src/robot.down.bmp"
+#define origin "imgs/map.bmp"
 
 using namespace std;
 

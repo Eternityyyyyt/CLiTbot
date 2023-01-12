@@ -8,6 +8,9 @@ using namespace std;
 bool Map::load(const char* path) {//从path加载地图,返回是否成功并输出失败原因
 	ifstream fin;
 	fin.open(path);
+	if (!fin.is_open()) {
+		return false;
+	}
 	fin >> row >> col >> num_lights >> num_procs;//行 列 需要点亮的灯的个数 最多允许的过程数目 
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < col; j++) {
