@@ -6,7 +6,7 @@
 #include "head.h"
 using namespace std;
 
-bool Map::load(const char* path) {//´Ópath¼ÓÔØµØÍ¼,·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
+bool Map::load(const char* path) {//ä»pathåŠ è½½åœ°å›¾,è¿”å›æ˜¯å¦æˆåŠŸå¹¶è¾“å‡ºå¤±è´¥åŸå› 
 	ifstream fin;
 	fin.open(path);
 	fin >> row >> col >> num_lights >> num_procs;
@@ -30,6 +30,7 @@ bool Map::load(const char* path) {//´Ópath¼ÓÔØµØÍ¼,·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
 	cells[robot.pos.y][robot.pos.x].robot = true;
 	fin.close();
 	exist = true;
+	draw_the_original_map();//è°ƒç”¨æ­¤å‡½æ•°å³å¯ç”»å‡ºåˆå§‹çš„å›¾åƒ 
 	return true;
 }
 bool Map::successed()
@@ -44,7 +45,7 @@ bool Map::successed()
 	}
 	return to_return;
 }
-bool Map::robot_move() //µØÍ¼ÖĞµÄrobotÏòËù³¯ÏòµÄ·½ÏòÒÆ¶¯£¬·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
+bool Map::robot_move() //åœ°å›¾ä¸­çš„robotå‘æ‰€æœå‘çš„æ–¹å‘ç§»åŠ¨ï¼Œè¿”å›æ˜¯å¦æˆåŠŸå¹¶è¾“å‡ºå¤±è´¥åŸå› 
 {
 	switch (robot.dir)
 	{
@@ -111,7 +112,7 @@ bool Map::robot_move() //µØÍ¼ÖĞµÄrobotÏòËù³¯ÏòµÄ·½ÏòÒÆ¶¯£¬·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°Ü
 	}
 	return true;
 }
-bool Map::robot_jump()//ÏòÇ°ÌøÔ¾£¨¸ß¶È²î1£©£¬·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
+bool Map::robot_jump()//å‘å‰è·³è·ƒï¼ˆé«˜åº¦å·®1ï¼‰ï¼Œè¿”å›æ˜¯å¦æˆåŠŸå¹¶è¾“å‡ºå¤±è´¥åŸå› 
 {
 	switch (robot.dir)
 	{
@@ -178,7 +179,7 @@ bool Map::robot_jump()//ÏòÇ°ÌøÔ¾£¨¸ß¶È²î1£©£¬·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
 	}
 	return true;
 }
-bool Map::robot_lit()//µãÁÁµÆ£¬·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
+bool Map::robot_lit()//ç‚¹äº®ç¯ï¼Œè¿”å›æ˜¯å¦æˆåŠŸå¹¶è¾“å‡ºå¤±è´¥åŸå› 
 {
 	if (cells[robot.pos.y][robot.pos.x].light_id < 0)
 	{
