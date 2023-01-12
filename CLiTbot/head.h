@@ -5,6 +5,12 @@
 #include <algorithm>
 #include <fstream>
 #include <cmath>
+#define left_robot "src/robot.left.bmp"
+#define right_robot "src/robot.right.bmp"
+#define up_robot "src/robot.up.bmp"
+#define down_robot "src/robot.down.bmp"
+#define origin "imgs/map.bmp"
+
 using namespace std;
 
 const int MAX_OPS = 1000;
@@ -13,11 +19,12 @@ const int MAX_ROW = 8;
 const int MAX_COL = 8;
 const int MAX_LIT = 100;
 const int MAX_PATH_LEN = 114;
+extern int time_;
 
-//ä½ç½®ç±»å‹ï¼Œå¯ç”¨æ¥è¡¨è¾¾æœºå™¨äººæˆ–ç¯æ‰€åœ¨ä½ç½®
+//Î»ÖÃÀàĞÍ£¬¿ÉÓÃÀ´±í´ï»úÆ÷ÈË»òµÆËùÔÚÎ»ÖÃ
 struct Position
 {
-	int x, y; // xè¡¨ç¤ºåˆ—å·ï¼Œyè¡¨ç¤ºè¡Œå·
+	int x, y; // x±íÊ¾ÁĞºÅ£¬y±íÊ¾ĞĞºÅ
 	bool operator==(const Position p)
 	{
 		if (x == p.x && y == p.y)
@@ -30,7 +37,7 @@ struct Position
 		}
 	}
 };
-//æ–¹å‘æšä¸¾ç±»å‹ï¼Œå¯ç”¨æ¥è¡¨è¾¾æœºå™¨äººæœå‘ï¼Œåªæœ‰å››ç§å–å€¼
+//·½ÏòÃ¶¾ÙÀàĞÍ£¬¿ÉÓÃÀ´±í´ï»úÆ÷ÈË³¯Ïò£¬Ö»ÓĞËÄÖÖÈ¡Öµ
 enum Direction
 {
 	UP,
@@ -38,27 +45,27 @@ enum Direction
 	LEFT,
 	RIGHT
 };
-//æœºå™¨äººç±»å‹
+//»úÆ÷ÈËÀàĞÍ
 struct Robot
 {
-	Position pos;			   //æœºå™¨äººä½ç½®
-	Direction dir;			   //æœºå™¨äººæœå‘
-	void turn(int dir_to_turn); // 0è¡¨ç¤ºå·¦è½¬ï¼Œ1è¡¨ç¤ºå³è½¬
+	Position pos;			   //»úÆ÷ÈËÎ»ÖÃ
+	Direction dir;			   //»úÆ÷ÈË³¯Ïò
+	void turn(int dir_to_turn); // 0±íÊ¾×ó×ª£¬1±íÊ¾ÓÒ×ª
 };
-//ç¯ç±»å‹
+//µÆÀàĞÍ
 struct Light
 {
-	Position pos; //ç¯çš„ä½ç½®
-	bool lighten; //æ˜¯å¦è¢«ç‚¹äº®
+	Position pos; //µÆµÄÎ»ÖÃ
+	bool lighten; //ÊÇ·ñ±»µãÁÁ
 };
-//å•å…ƒæ ¼ç±»å‹
+//µ¥Ôª¸ñÀàĞÍ
 struct Cell
 {
-	int height;	  //é«˜åº¦
-	int light_id; //ç¯æ ‡è¯†ï¼Œ-1è¡¨ç¤ºè¯¥å•å…ƒæ ¼ä¸Šæ²¡æœ‰ç¯
-	bool robot;	  // true/falseåˆ†åˆ«è¡¨ç¤ºæœºå™¨äººåœ¨/ä¸åœ¨è¯¥å•å…ƒæ ¼ä¸Š
+	int height;	  //¸ß¶È
+	int light_id; //µÆ±êÊ¶£¬-1±íÊ¾¸Ãµ¥Ôª¸ñÉÏÃ»ÓĞµÆ
+	bool robot;	  // true/false·Ö±ğ±íÊ¾»úÆ÷ÈËÔÚ/²»ÔÚ¸Ãµ¥Ôª¸ñÉÏ
 };
-//æŒ‡ä»¤ç±»å‹
+//Ö¸ÁîÀàĞÍ
 enum OpType
 {
 	TL,
@@ -68,76 +75,105 @@ enum OpType
 	LIT,
 	CALL,
 };
-// TLä¸ºå·¦è½¬ï¼ŒTRä¸ºå³è½¬ï¼ŒMOVä¸ºå‘å‰è¡Œèµ°ï¼ŒJMPä¸ºè·³è·ƒï¼ŒLITä¸ºç‚¹äº®ç¯ï¼›
-//ä½¿ç”¨CALLè¡¨ç¤ºè°ƒç”¨MAINï¼ŒCALL + 1è¡¨ç¤ºè°ƒç”¨P1ï¼Œä»¥æ­¤ç±»æ¨ã€‚
+// TLÎª×ó×ª£¬TRÎªÓÒ×ª£¬MOVÎªÏòÇ°ĞĞ×ß£¬JMPÎªÌøÔ¾£¬LITÎªµãÁÁµÆ£»
+//Ê¹ÓÃCALL±íÊ¾µ÷ÓÃMAIN£¬CALL + 1±íÊ¾µ÷ÓÃP1£¬ÒÔ´ËÀàÍÆ¡£
 
-//è¿‡ç¨‹ç±»å‹
+//¹ı³ÌÀàĞÍ
 struct Proc
 {
-	OpType ops[MAX_OPS]; //æŒ‡ä»¤è®°å½•ï¼ŒMAX_OPSä¸ºåˆç†å¸¸æ•°
-	int count;			 //æœ‰æ•ˆæŒ‡ä»¤æ•°
+	OpType ops[MAX_OPS]; //Ö¸Áî¼ÇÂ¼£¬MAX_OPSÎªºÏÀí³£Êı
+	int count;			 //ÓĞĞ§Ö¸ÁîÊı
 };
 
-//æŒ‡ä»¤åºåˆ—ç±»å‹
+//Ö¸ÁîĞòÁĞÀàĞÍ
 struct OpSeq
 {
-	//è¿‡ç¨‹è®°å½•ï¼ŒMAX_PROCSä¸ºåˆç†å¸¸æ•°
-	// procs[0]ä¸ºMAINè¿‡ç¨‹ï¼Œprocs[1]ä¸ºP1è¿‡ç¨‹ï¼Œä»¥æ­¤ç±»æ¨
+	//¹ı³Ì¼ÇÂ¼£¬MAX_PROCSÎªºÏÀí³£Êı
+	// procs[0]ÎªMAIN¹ı³Ì£¬procs[1]ÎªP1¹ı³Ì£¬ÒÔ´ËÀàÍÆ
 	Proc procs[MAX_PROCS];
-	int count; //æœ‰æ•ˆè¿‡ç¨‹æ•°
+	int count; //ÓĞĞ§¹ı³ÌÊı
 };
-//åœ°å›¾çŠ¶æ€ç±»å‹
+//µØÍ¼×´Ì¬ÀàĞÍ
 struct Map
 {
-	Cell cells[MAX_ROW][MAX_COL]; //å•å…ƒæ ¼ç»„æˆäºŒç»´æ•°ç»„ï¼ŒMAX_ROWã€MAX_COLä¸ºåˆç†å¸¸æ•°
-	int row, col;				  //æœ‰æ•ˆè¡Œæ•°ã€æœ‰æ•ˆåˆ—æ•°
-	Light lights[MAX_LIT];		  //ç¯è®°å½•ï¼ŒMAX_LITä¸ºåˆç†å¸¸æ•°
-	int num_lights;				  //æœ‰æ•ˆç¯æ•°
-	Robot robot;				  //åœ°å›¾ä¸ŠåŒæ—¶åªæœ‰ä¸€ä¸ªæœºå™¨äºº
+	Cell cells[MAX_ROW][MAX_COL]; //µ¥Ôª¸ñ×é³É¶şÎ¬Êı×é£¬MAX_ROW¡¢MAX_COLÎªºÏÀí³£Êı
+	int row, col;				  //ÓĞĞ§ĞĞÊı¡¢ÓĞĞ§ÁĞÊı
+	Light lights[MAX_LIT];		  //µÆ¼ÇÂ¼£¬MAX_LITÎªºÏÀí³£Êı
+	int num_lights;				  //ÓĞĞ§µÆÊı
+	Robot robot;				  //µØÍ¼ÉÏÍ¬Ê±Ö»ÓĞÒ»¸ö»úÆ÷ÈË
 	int num_procs;
 	bool exist = false;
-	int op_limit[MAX_PROCS];	  //æ¯ä¸ªè¿‡ç¨‹çš„æŒ‡ä»¤æ•°é™åˆ¶
+	int op_limit[MAX_PROCS];	  //Ã¿¸ö¹ı³ÌµÄÖ¸ÁîÊıÏŞÖÆ
 	bool load(const char* path);
 	bool successed();
-	bool robot_move(); //åœ°å›¾ä¸­çš„robotå‘æ‰€æœå‘çš„æ–¹å‘ç§»åŠ¨ï¼Œè¿”å›æ˜¯å¦æˆåŠŸ
+	bool robot_move(); //µØÍ¼ÖĞµÄrobotÏòËù³¯ÏòµÄ·½ÏòÒÆ¶¯£¬·µ»ØÊÇ·ñ³É¹¦
 	bool robot_jump();
 	bool robot_lit();
-};//æ¸¸æˆè¿‡ç¨‹ä¸­ï¼Œåœ°å›¾çŠ¶æ€å¯èƒ½æ”¹å˜çš„åªæœ‰æœºå™¨äººçš„ä½ç½®ä¸æœå‘ï¼Œç¯è¢«ç‚¹äº®ä¸å¦ï¼ˆéœ€è¦ç‚¹äº®çš„ç¯ï¼‰ 
-// æ¸¸æˆçŠ¶æ€ç±»å‹
+};//ÓÎÏ·¹ı³ÌÖĞ£¬µØÍ¼×´Ì¬¿ÉÄÜ¸Ä±äµÄÖ»ÓĞ»úÆ÷ÈËµÄÎ»ÖÃÓë³¯Ïò£¬µÆ±»µãÁÁÓë·ñ£¨ĞèÒªµãÁÁµÄµÆ£© 
+// ÓÎÏ·×´Ì¬ÀàĞÍ
 struct Game
 {
-	string map_name; //å½“å‰åœ°å›¾çš„æ–‡ä»¶è·¯å¾„å
-	Map map_init;	 //åœ°å›¾åˆå§‹çŠ¶æ€
-	Map map_run;	 //æŒ‡ä»¤æ‰§è¡Œè¿‡ç¨‹ä¸­çš„åœ°å›¾çŠ¶æ€
-	//è‡ªåŠ¨ä¿å­˜çš„æ–‡ä»¶è·¯å¾„åï¼ŒMAX_PATH_LENä¸ºåˆç†å¸¸æ•°
+	string map_name; //µ±Ç°µØÍ¼µÄÎÄ¼şÂ·¾¶Ãû
+	Map map_init;	 //µØÍ¼³õÊ¼×´Ì¬
+	Map map_run;	 //Ö¸ÁîÖ´ĞĞ¹ı³ÌÖĞµÄµØÍ¼×´Ì¬
+	//×Ô¶¯±£´æµÄÎÄ¼şÂ·¾¶Ãû£¬MAX_PATH_LENÎªºÏÀí³£Êı
 	string save_path;
-	int auto_save_id; //è‡ªåŠ¨ä¿å­˜æ ‡è¯†
-	int limit;		  //æ‰§è¡ŒæŒ‡ä»¤ä¸Šé™ï¼ˆç”¨æ¥é¿å…æ— é™é€’å½’ï¼‰
+	int auto_save_id; //×Ô¶¯±£´æ±êÊ¶
+	int limit;		  //Ö´ĞĞÖ¸ÁîÉÏÏŞ£¨ÓÃÀ´±ÜÃâÎŞÏŞµİ¹é£©
 };
 enum ResultType
 {
-	FAILED, //å‘½ä»¤æ–‡ä»¶è¯»å–å¤±è´¥ï¼Œè¯´æ˜å‘½ä»¤æ–‡ä»¶å­˜åœ¨é”™è¯¯
-	LIGHT,	//ç‚¹äº®æ‰€æœ‰ç¯
-	LIMIT,	//è¾¾åˆ°æ­¥æ•°é™åˆ¶
-	DARK	//æœªç‚¹äº®æ‰€æœ‰ç¯ï¼Œä½†æ˜¯æ“ä½œå·²ç»æ‰§è¡Œå®Œæ¯•
+	FAILED, //ÃüÁîÎÄ¼ş¶ÁÈ¡Ê§°Ü£¬ËµÃ÷ÃüÁîÎÄ¼ş´æÔÚ´íÎó
+	LIGHT,	//µãÁÁËùÓĞµÆ
+	LIMIT,	//´ïµ½²½ÊıÏŞÖÆ
+	DARK	//Î´µãÁÁËùÓĞµÆ£¬µ«ÊÇ²Ù×÷ÒÑ¾­Ö´ĞĞÍê±Ï
 };
-//ä¸€æ¬¡è¿è¡Œå‘½ä»¤çš„çš„ç»“æœ
+//Ò»´ÎÔËĞĞÃüÁîµÄµÄ½á¹û
 struct Result
 {
-	int steps;		   //æ€»æ­¥æ•°
-	ResultType result; //ç»“æœçš„ç±»å‹,ç”¨enumè®°å½•ç»“æŸçš„åŸå›  
+	int steps;		   //×Ü²½Êı
+	ResultType result; //½á¹ûµÄÀàĞÍ,ÓÃenum¼ÇÂ¼½áÊøµÄÔ­Òò 
 	void output(string op);
 };
-Result robot_run(const char* path);
+# pragma pack(1)
+struct BMPFileHeader{
+	char id[2];//B,M 
+	int size;//ÎÄ¼ş³¤¶È 
+	short save1;//±£Áô×Ö¶Î£¬ËÄ×Ö½Ú 
+	short save2;
+	int offset;//ÏñËØÆ«ÒÆ 
+};
+# pragma pack(1)
+struct BMPInfoHeader{
+	   int headsize;//ĞÅÏ¢Í·³¤¶È 
+	   int wid;//x 
+	   int hei;//y 
+	   short image_pile;//Í¼²ã£¬Ã»ÓĞÓÃ 
+	   short pixel_position;//Ã¿ÏñËØÎ» 
+	   int nothing;//Ñ¹ËõËã·¨ 
+	   int pixel_byte;
+	   int x_fbl;
+	   int y_fbl;
+	   int board_colour;
+	   int printer;
+};	
+struct pixel{
+	unsigned char b,g,r;
+};
+ extern pixel content[900][1200];//content[y][x]---ÏÈ¶ÁÀï²ãµÄ-¶ÔÓ¦ÏÈ¶Áx ---Ö»ÔÚ 900*1200µÄÇøÓòÄÚ×÷»­ 
+//Õâ¸öµÄ´óĞ¡¶¨ÒåµÄÊÇµØÍ¼µÄ×Ü³ß´çµÄÏñËØ´óĞ¡   1200*900´óĞ¡ 
+extern pixel Save[200][100];
+Result robot_run(const char* path);//pathÊÇÖ¸ÁîĞòÁĞµÄÂ·¾¶Ãû£¬¸Ãº¯Êı¶ÁÈ¡Ö¸ÁîĞòÁĞÎÄ¼ş£¬²¢ÇÒÖ´ĞĞÆäÖĞµÄÖ¸ÁîĞòÁĞ 
 bool output_status();
-int string_to_int(string input);//å°†å­—ç¬¦è½¬åŒ–ä¸ºæ•°å­— 
+int string_to_int(string input);//½«×Ö·û×ª»¯ÎªÊı×Ö 
 int check_P_string(string input);
 bool op_input(const char* path);
-void save(const char* path);
+//ÒÔÏÂÊÇÎÒĞèÒª²¹³äµÄ²¿·Ö 
+void save(string path);
 void auto_save();
 void chartlet_robot(int row,int col,int dir,int height);
 void draw_a_normal_cell(int row,int col,int height,int exist_light);
-//å¿…ä¸å¯å°‘çš„åŸºç¡€å®šä¹‰éƒ¨åˆ† 
+//±Ø²»¿ÉÉÙµÄ»ù´¡¶¨Òå²¿·Ö 
 void draw_the_original_map();
 int get_digit(int number);
 string to_string(int n);

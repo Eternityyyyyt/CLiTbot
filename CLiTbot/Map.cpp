@@ -5,33 +5,34 @@
 #include <cmath>
 #include "head.h"
 using namespace std;
-bool Map::load(const char* path) {//ä»pathåŠ è½½åœ°å›¾,è¿”å›æ˜¯å¦æˆåŠŸå¹¶è¾“å‡ºå¤±è´¥åŸå› 
+bool Map::load(const char* path) {//´Ópath¼ÓÔØµØÍ¼,·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
 	ifstream fin;
 	fin.open(path);
 	if (!fin.is_open()) {
 		return false;
 	}
-	fin >> row >> col >> num_lights >> num_procs;//è¡Œ åˆ— éœ€è¦ç‚¹äº®çš„ç¯çš„ä¸ªæ•° æœ€å¤šå…è®¸çš„è¿‡ç¨‹æ•°ç›® 
+	fin >> row >> col >> num_lights >> num_procs;//ĞĞ ÁĞ ĞèÒªµãÁÁµÄµÆµÄ¸öÊı ×î¶àÔÊĞíµÄ¹ı³ÌÊıÄ¿ 
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < col; j++) {
-			fin >> cells[i][j].height;//è¾“å…¥å„è¡Œå„åˆ—çš„é«˜åº¦ï¼Œé›¶è¡¨ç¤ºä¸å­˜åœ¨ 
-			cells[i][j].robot = false;//ä¸€å¼€å§‹éƒ½æ²¡æœ‰æœºå™¨äºº 
-			cells[i][j].light_id = -1;//ä¸€å¼€å§‹éƒ½æ²¡æœ‰ç¯ 
+			fin >> cells[i][j].height;//ÊäÈë¸÷ĞĞ¸÷ÁĞµÄ¸ß¶È£¬Áã±íÊ¾²»´æÔÚ 
+			cells[i][j].robot = false;//Ò»¿ªÊ¼¶¼Ã»ÓĞ»úÆ÷ÈË 
+			cells[i][j].light_id = -1;//Ò»¿ªÊ¼¶¼Ã»ÓĞµÆ 
 		}
 	}
-	for (int i = 0; i < num_lights; i++) {//mapæœ‰ä¿®æ”¹ 
-		fin >> lights[i].pos.x >> lights[i].pos.y;//æ¯ä¸€è¡Œéƒ½è¾“å…¥ä¸€ä¸ªç¯çš„æ¨ªçºµåæ ‡ 
-		cells[lights[i].pos.y][lights[i].pos.x].light_id = i;//ç‚¹äº®å¯¹åº”å—ä¸Šçš„ç¯ 
+	for (int i = 0; i < num_lights; i++) {//mapÓĞĞŞ¸Ä 
+		fin >> lights[i].pos.x >> lights[i].pos.y;//Ã¿Ò»ĞĞ¶¼ÊäÈëÒ»¸öµÆµÄºá×İ×ø±ê 
+		cells[lights[i].pos.y][lights[i].pos.x].light_id = i;//µãÁÁ¶ÔÓ¦¿éÉÏµÄµÆ 
 	}
 	for (int i = 0; i < num_procs; i++) {
-		fin >> op_limit[i];//è¾“å…¥å„ä¸ªè¿‡ç¨‹çš„æŒ‡ä»¤æ•°ç›®é™åˆ¶ 
+		fin >> op_limit[i];//ÊäÈë¸÷¸ö¹ı³ÌµÄÖ¸ÁîÊıÄ¿ÏŞÖÆ 
 	}
-	int dir_temp;//æœºå™¨äººçš„åˆå§‹æœå‘--0 1 2 3  ä¸Šä¸‹å·¦å³ 
+	int dir_temp;//»úÆ÷ÈËµÄ³õÊ¼³¯Ïò--0 1 2 3  ÉÏÏÂ×óÓÒ 
 	fin >> robot.pos.x >> robot.pos.y >> dir_temp;
-	robot.dir = (Direction)dir_temp;//å¼ºè½¬æˆenumä¸­çš„å¯¹åº”æœå‘-å¥½é˜…è¯» 
-	cells[robot.pos.y][robot.pos.x].robot = true;//è¡¨ç¤ºå¯¹åº”çš„å—ä¸Šæœ‰æœºå™¨äºº
+	robot.dir = (Direction)dir_temp;//Ç¿×ª³ÉenumÖĞµÄ¶ÔÓ¦³¯Ïò-ºÃÔÄ¶Á 
+	cells[robot.pos.y][robot.pos.x].robot = true;//±íÊ¾¶ÔÓ¦µÄ¿éÉÏÓĞ»úÆ÷ÈË
 	fin.close();
-	exist = true;
+	exist=true; 
+	draw_the_original_map();//µ÷ÓÃ´Ëº¯Êı¼´¿É»­³ö³õÊ¼µÄÍ¼Ïñ 
 	return true;
 }
 
@@ -49,7 +50,7 @@ bool Map::successed()
 	}
 	return to_return;
 }
-bool Map::robot_move() //åœ°å›¾ä¸­çš„robotå‘æ‰€æœå‘çš„æ–¹å‘ç§»åŠ¨ï¼Œè¿”å›æ˜¯å¦æˆåŠŸå¹¶è¾“å‡ºå¤±è´¥åŸå› 
+bool Map::robot_move() //µØÍ¼ÖĞµÄrobotÏòËù³¯ÏòµÄ·½ÏòÒÆ¶¯£¬·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
 {
 	switch (robot.dir)
 	{
@@ -116,7 +117,7 @@ bool Map::robot_move() //åœ°å›¾ä¸­çš„robotå‘æ‰€æœå‘çš„æ–¹å‘ç§»åŠ¨ï¼Œè¿”å›æ˜
 	}
 	return true;
 }
-bool Map::robot_jump()//å‘å‰è·³è·ƒï¼ˆé«˜åº¦å·®1ï¼‰ï¼Œè¿”å›æ˜¯å¦æˆåŠŸå¹¶è¾“å‡ºå¤±è´¥åŸå› 
+bool Map::robot_jump()//ÏòÇ°ÌøÔ¾£¨¸ß¶È²î1£©£¬·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
 {
 	switch (robot.dir)
 	{
@@ -183,7 +184,7 @@ bool Map::robot_jump()//å‘å‰è·³è·ƒï¼ˆé«˜åº¦å·®1ï¼‰ï¼Œè¿”å›æ˜¯å¦æˆåŠŸå¹¶è¾“å
 	}
 	return true;
 }
-bool Map::robot_lit()//ç‚¹äº®ç¯ï¼Œè¿”å›æ˜¯å¦æˆåŠŸå¹¶è¾“å‡ºå¤±è´¥åŸå› 
+bool Map::robot_lit()//µãÁÁµÆ£¬·µ»ØÊÇ·ñ³É¹¦²¢Êä³öÊ§°ÜÔ­Òò
 {
 	if (cells[robot.pos.y][robot.pos.x].light_id < 0)
 	{
