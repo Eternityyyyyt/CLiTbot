@@ -74,7 +74,7 @@ void run_proc(OpSeq *p_seq, int num_of_proc,Result* p_result)
 			break;
 		case LIT:
 			game.map_run.robot_lit();
-			auto_save();
+		    auto_save();
 			break;
 		default:
 			auto_save();

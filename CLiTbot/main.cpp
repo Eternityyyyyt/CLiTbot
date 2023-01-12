@@ -40,7 +40,7 @@ int main() {
 		}
 		else if (input_op.substr(0, 4) == "RUN ") {
 			Result run_result;
-			run_result = robot_run(input_op.substr(4).c_str());
+			 run_result = robot_run(input_op.substr(4).c_str());
 			output_results(run_result, input_op.substr(4).c_str());
 		}
 		//ÊäÈëµÄÊÇSTATUS

@@ -5,33 +5,36 @@
 #include <cmath>
 #include "head.h"
 using namespace std;
-
 bool Map::load(const char* path) {//从path加载地图,返回是否成功并输出失败原因
 	ifstream fin;
 	fin.open(path);
-	fin >> row >> col >> num_lights >> num_procs;
+	fin >> row >> col >> num_lights >> num_procs;//行 列 需要点亮的灯的个数 最多允许的过程数目 
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < col; j++) {
-			fin >> cells[i][j].height;
-			cells[i][j].robot = false;
-			cells[i][j].light_id = -1;
+			fin >> cells[i][j].height;//输入各行各列的高度，零表示不存在 
+			cells[i][j].robot = false;//一开始都没有机器人 
+			cells[i][j].light_id = -1;//一开始都没有灯 
 		}
 	}
-	for (int i = 0; i < num_lights; i++) {
-		fin >> lights[i].pos.x >> lights[i].pos.y;
-		cells[lights[i].pos.y][lights[i].pos.x].light_id = i;
+	for (int i = 0; i < num_lights; i++) {//map有修改 
+		fin >> lights[i].pos.x >> lights[i].pos.y;//每一行都输入一个灯的横纵坐标 
+		cells[lights[i].pos.y][lights[i].pos.x].light_id = i;//点亮对应块上的灯 
 	}
 	for (int i = 0; i < num_procs; i++) {
-		fin >> op_limit[i];
+		fin >> op_limit[i];//输入各个过程的指令数目限制 
 	}
-	int dir_temp;
+	int dir_temp;//机器人的初始朝向--0 1 2 3  上下左右 
 	fin >> robot.pos.x >> robot.pos.y >> dir_temp;
-	robot.dir = (Direction)dir_temp;
-	cells[robot.pos.y][robot.pos.x].robot = true;
+	robot.dir = (Direction)dir_temp;//强转成enum中的对应朝向-好阅读 
+	cells[robot.pos.y][robot.pos.x].robot = true;//表示对应的块上有机器人
 	fin.close();
-	exist = true;
+	exist=true; 
+	draw_the_original_map();//调用此函数即可画出初始的图像 
 	return true;
 }
+
+
+ 
 bool Map::successed()
 {
 	bool to_return = true;

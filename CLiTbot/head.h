@@ -1,16 +1,25 @@
+#ifndef HEAD_H
+#define HEAD_H
 #include <iostream>
 #include <cstring>
 #include <algorithm>
 #include <fstream>
 #include <cmath>
+#define left_robot "robot.left.bmp"
+#define right_robot "robot.right.bmp"
+#define up_robot "robot.up.bmp"
+#define down_robot "robot.down.bmp"
+#define origin "map.bmp"
+
 using namespace std;
 
 const int MAX_OPS = 1000;
-const int MAX_PROCS = 11 + 45 + 14;
+const int MAX_PROCS = 11+45+14;
 const int MAX_ROW = 8;
 const int MAX_COL = 8;
 const int MAX_LIT = 100;
 const int MAX_PATH_LEN = 114;
+extern int time_;
 
 //位置类型，可用来表达机器人或灯所在位置
 struct Position
@@ -100,7 +109,7 @@ struct Map
 	bool robot_move(); //地图中的robot向所朝向的方向移动，返回是否成功
 	bool robot_jump();
 	bool robot_lit();
-};
+};//游戏过程中，地图状态可能改变的只有机器人的位置与朝向，灯被点亮与否（需要点亮的灯） 
 // 游戏状态类型
 struct Game
 {
@@ -123,14 +132,51 @@ enum ResultType
 struct Result
 {
 	int steps;		   //总步数
-	ResultType result; //结果的类型
+	ResultType result; //结果的类型,用enum记录结束的原因 
 	void output(string op);
 };
-Result robot_run(const char* path);
+# pragma pack(1)
+struct BMPFileHeader{
+	char id[2];//B,M 
+	int size;//文件长度 
+	short save1;//保留字段，四字节 
+	short save2;
+	int offset;//像素偏移 
+};
+# pragma pack(1)
+struct BMPInfoHeader{
+	   int headsize;//信息头长度 
+	   int wid;//x 
+	   int hei;//y 
+	   short image_pile;//图层，没有用 
+	   short pixel_position;//每像素位 
+	   int nothing;//压缩算法 
+	   int pixel_byte;
+	   int x_fbl;
+	   int y_fbl;
+	   int board_colour;
+	   int printer;
+};	
+struct pixel{
+	unsigned char b,g,r;
+};
+ extern pixel content[900][1200];//content[y][x]---先读里层的-对应先读x ---只在 900*1200的区域内作画 
+//这个的大小定义的是地图的总尺寸的像素大小   1200*900大小 
+extern pixel Save[200][100];
+Result robot_run(const char* path);//path是指令序列的路径名，该函数读取指令序列文件，并且执行其中的指令序列 
 bool output_status();
-int string_to_int(string input);
+int string_to_int(string input);//将字符转化为数字 
 int check_P_string(string input);
 bool op_input(const char* path);
-void save(const char* path);
+//以下是我需要补充的部分 
+void save(string path);
 void auto_save();
+void chartlet_robot(int row,int col,int dir,int height);
+void draw_a_normal_cell(int row,int col,int height,int exist_light);
+//必不可少的基础定义部分 
+void draw_the_original_map();
+int get_digit(int number);
+string to_string(int n);
+void draw_a_lighted_cell(int row,int col,int height);
 bool output_results(Result last_result, string path);
+#endif

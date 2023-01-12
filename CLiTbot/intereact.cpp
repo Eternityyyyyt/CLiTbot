@@ -57,7 +57,7 @@ bool op_input(const char* path)
 bool output_status()
 {
     ifstream fin;
-    fin.open(game.map_name);
+    fin.open(game.map_name.c_str());
     fin >> game.map_init.row >> game.map_init.col >> game.map_init.num_lights;
     fin >> game.map_init.num_procs;
     for (int i = 0; i < game.map_init.row; i++)
