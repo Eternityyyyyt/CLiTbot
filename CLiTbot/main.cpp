@@ -64,9 +64,11 @@ int main() {
 		else if (input_op.substr(0, 9) == "AUTOSAVE ") {
 			if (input_op.substr(9) == "OFF") {//输入的是AUTOSAVE OFF
 				game.save_path = "";
+				cout << "<System>:Autosave Turned Off" << endl;
 			}
 			else {//输入的是地址
 				game.save_path = input_op.substr(9);
+				cout << "<System>:Successfully Set Autosave Path As <" << input_op.substr(9) << ">" << endl;
 			}
 		}
 		//输入的是OP
