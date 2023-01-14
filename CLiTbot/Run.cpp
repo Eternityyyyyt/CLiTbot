@@ -8,6 +8,11 @@ using namespace std;
 
 extern Game game;
 bool output_results(Result last_result ,string path){
+	ifstream fin;
+	fin.open(path);
+	if (fin.is_open() == 0) {
+		return false;
+	}
 	cout<<"Run "<< path <<", result: ";
 	if(last_result.result==0)
 	{
@@ -29,45 +34,45 @@ bool output_results(Result last_result ,string path){
     {
         for(int j=0;j<game.map_run.col;j++)
         {
-            if(game.map_run.cells[i][j].height==0)//±íÊ¾¸Ãµ¥Ôª¸ñÃ»ÓÐ¸ß¶È
+            if(game.map_run.cells[i][j].height==0)//è¡¨ç¤ºè¯¥å•å…ƒæ ¼æ²¡æœ‰é«˜åº¦
             {
                 cout<<" ";
             }
             else{
-                if(game.map_run.cells[i][j].light_id!=-1)//±íÊ¾¸Ãµ¥Ôª¸ñÓÐµÆ
+                if(game.map_run.cells[i][j].light_id!=-1)//è¡¨ç¤ºè¯¥å•å…ƒæ ¼æœ‰ç¯
                 {
-					if(game.map_run.lights[game.map_run.cells[i][j].light_id].lighten)//±íÊ¾µÆÒÑ¾­±»µãÁÁ
+					if(game.map_run.lights[game.map_run.cells[i][j].light_id].lighten)//è¡¨ç¤ºç¯å·²ç»è¢«ç‚¹äº®
 					{
-						if(game.map_run.cells[i][j].robot)//±íÊ¾¸Ãµ¥Ôª¸ñÓÐ»úÆ÷ÈË
+						if(game.map_run.cells[i][j].robot)//è¡¨ç¤ºè¯¥å•å…ƒæ ¼æœ‰æœºå™¨äºº
 						{
 							cout<<"\033[91;103;1m"<<game.map_run.cells[i][j].height<<"\033[0m";
 						}
-						else{//±íÊ¾¸Ãµ¥Ôª¸ñÃ»ÓÐ»úÆ÷ÈË 
+						else{//è¡¨ç¤ºè¯¥å•å…ƒæ ¼æ²¡æœ‰æœºå™¨äºº 
 							cout<<"\033[92;103;1m"<<game.map_run.cells[i][j].height<<"\033[0m";
 						}
 					}
 					else{
-						if(game.map_run.cells[i][j].robot)//±íÊ¾¸Ãµ¥Ôª¸ñÓÐ»úÆ÷ÈË
+						if(game.map_run.cells[i][j].robot)//è¡¨ç¤ºè¯¥å•å…ƒæ ¼æœ‰æœºå™¨äºº
 						{
 							cout<<"\033[91;104;1m"<<game.map_run.cells[i][j].height<<"\033[0m";
 						}
-						else{//±íÊ¾¸Ãµ¥Ôª¸ñÃ»ÓÐ»úÆ÷ÈË 
+						else{//è¡¨ç¤ºè¯¥å•å…ƒæ ¼æ²¡æœ‰æœºå™¨äºº 
 							cout<<"\033[92;104;1m"<<game.map_run.cells[i][j].height<<"\033[0m";
 						}
 					}
                }
-                else{//±íÊ¾¸Ãµ¥Ôª¸ñÃ»ÓÐµÆ
-                    if(game.map_run.cells[i][j].robot)//±íÊ¾¸Ãµ¥Ôª¸ñÓÐ»úÆ÷ÈË
+                else{//è¡¨ç¤ºè¯¥å•å…ƒæ ¼æ²¡æœ‰ç¯
+                    if(game.map_run.cells[i][j].robot)//è¡¨ç¤ºè¯¥å•å…ƒæ ¼æœ‰æœºå™¨äºº
                     {
                         cout<<"\033[91;100;1m"<<game.map_run.cells[i][j].height<<"\033[0m";
                     }
-                    else{//±íÊ¾¸Ãµ¥Ôª¸ñÃ»ÓÐ»úÆ÷ÈË 
+                    else{//è¡¨ç¤ºè¯¥å•å…ƒæ ¼æ²¡æœ‰æœºå™¨äºº 
                         cout<<"\033[92;100;1m"<<game.map_run.cells[i][j].height<<"\033[0m";
                     }
                 }
             }
         }
-        cout<<endl;//Ã¿´ÎÍê³ÉÒ»ÐÐµÄÊäÈë¾Í»»ÐÐ
+        cout<<endl;//æ¯æ¬¡å®Œæˆä¸€è¡Œçš„è¾“å…¥å°±æ¢è¡Œ
     }
 	cout<<"Robot is facing ";
 	switch (game.map_run.robot.dir)
