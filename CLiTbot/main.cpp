@@ -41,7 +41,8 @@ int main() {
 		else if (input_op.substr(0, 4) == "RUN ") {
 			Result run_result;
 			 run_result = robot_run(input_op.substr(4).c_str());
-			output_results(run_result, input_op.substr(4).c_str());
+			 if(run_result.result != FAILED)
+				output_results(run_result, input_op.substr(4).c_str());
 		}
 		//ÊäÈëµÄÊÇSTATUS
 		else if (input_op.substr(0, 6) == "STATUS" && input_op.size() == 6) {

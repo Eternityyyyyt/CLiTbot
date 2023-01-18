@@ -14,41 +14,58 @@ bool op_input(const char* path)
     ofstream fout;
     string path_string(path);
     fout.open(path);
-    int row;//用户使用的过程数
+    int user_proc_num;//用户使用的过程数
     int op_num[MAX_PROCS]={0};//存储用户输入的每个过程的指令数
-    cin >> row;
-    bool if_legal = true;//判断是否合法
-    if (row > game.map_init.num_procs)
-    {
-        if_legal = false;
-    }
-    while (!if_legal)
-    {
-        cout << "<System>:Error:The Number Of Processes Exceeds The Limit Of This Map!Please Re-enter!" << endl;
-        cin >> row;
-        if (row > game.map_init.num_procs)
+    bool input_legal = false;//判断是否合法
+    while (!input_legal) {
+        cout << "<System>:Please Input The Number Of Processes:";
+        cin >> user_proc_num;
+        if (cin.rdstate()) {
+            cout << "<System>:Error:This Input Is Illegal!Please Input a Number!" << endl;
+            cin.clear();
+            cin.ignore(std::numeric_limits<int>::max(), '\n');
+            input_legal = false;
+        }
+        else
         {
-            if_legal = false;
-        }
-        else {
-            if_legal = true;
+            if (user_proc_num > game.map_init.num_procs)
+            {
+                input_legal = false;
+                cout << "<System>:The Number Of The Processes Exceeds The Limit Of The Map!Please Re-input!" << endl;
+            }
+            else {
+                input_legal = true;
+            }     
         }
     }
-    fout << row << endl;
+    fout << user_proc_num << endl;
     string op_input;//获取用户的指令
-    for (int i = 0; i < row; i++)
+    for (int i = 0; i < user_proc_num; i++)
     {
+        cout << "<System>:Please Input Process "<<i<<":";
         cin >> op_num[i];
-        if (op_num[i] > game.map_init.op_limit[i])
-        {
-            cout << "<System>:Error:This Input Is Illegal!Please Re-enter!" << endl;
+        if (cin.rdstate()) {
+            cout << "<System>:Error:This Input Is Illegal!Please Input a Number!" << endl;
             i--;
+            cin.clear();
+            cin.ignore(std::numeric_limits<int>::max(), '\n');
             continue;
         }
-        else {
-            getline(cin, op_input);
+        else
+        {
+            if (op_num[i] > game.map_init.op_limit[i])
+            {
+                cout << "<System>:The Number Of The Operations In Process "<<i<<" Exceeds The Limit Of The Map!Please Re-input!" << endl;
+                cin.clear();
+                cin.ignore(std::numeric_limits<int>::max(), '\n');
+                i--;
+                continue;
+            }
+            else {
+                getline(cin, op_input);
+            }
+            fout << op_num[i] << op_input << endl;
         }
-        fout << op_num[i] << op_input << endl;
     }
     fout.close();
     return true;
